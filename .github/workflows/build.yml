@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Checkout Betaflight source
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set revision
         id: vars
@@ -32,7 +32,7 @@ jobs:
           echo "CONFIG_BRANCH=${{ github.event.inputs['config-branch'] || 'master' }}" >> $GITHUB_ENV
 
       - name: Checkout config repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ${{ env.CONFIG_REPO }}
           ref: ${{ env.CONFIG_BRANCH }}
@@ -54,7 +54,7 @@ jobs:
 
       - name: Upload firmware artifact
         if: success()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: firmware-${{ github.event.inputs.target }}
           path: obj/${{ github.event.inputs.target }}/*.hex
