@@ -28,7 +28,7 @@ jobs:
         id: vars
         run: |
           echo "REVISION=${{ github.event.inputs.revision || 'master' }}" >> $GITHUB_ENV
-          echo "CONFIG_REPO=${{ github.event.inputs['config-repo'] || 'https://github.com/betaflight/config' }}" >> $GITHUB_ENV
+          echo "CONFIG_REPO=${{ github.event.inputs['config-repo'] || 'betaflight/config' }}" >> $GITHUB_ENV
           echo "CONFIG_BRANCH=${{ github.event.inputs['config-branch'] || 'master' }}" >> $GITHUB_ENV
 
       - name: Checkout config repository
