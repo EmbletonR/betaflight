@@ -63,4 +63,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: firmware-${{ github.event.inputs.target }}
-          path: obj/${{ github.event.inputs.target }}/*.hex
+          path: build/${{ github.event.inputs.target }}/firmware.bin
