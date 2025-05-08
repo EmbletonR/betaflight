@@ -53,8 +53,10 @@ jobs:
           echo "Building target: ${{ github.event.inputs.target }}"
           make ${{ github.event.inputs.target }} CONFIG_REPO=./config
 
-      - name: List build directory
-        run: ls -R obj/${{ github.event.inputs.target }} || echo "Build folder not found"
+      - name: List entire obj folder structure
+        run: |
+          echo "Full obj directory structure:"
+          find obj/ | sort
 
       - name: Upload firmware artifact
         if: success()
