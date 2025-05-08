@@ -19,19 +19,20 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Betaflight source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set revision
         id: vars
         run: |
           echo "REVISION=${{ github.event.inputs.revision || 'master' }}" >> $GITHUB_ENV
-          echo "CONFIG_REPO=${{ github.event.inputs.config-repo || 'https://github.com/betaflight/config' }}" >> $GITHUB_ENV
-          echo "CONFIG_BRANCH=${{ github.event.inputs.config-branch || 'master' }}" >> $GITHUB_ENV
+          echo "CONFIG_REPO=${{ github.event.inputs['config-repo'] || 'https://github.com/betaflight/config' }}" >> $GITHUB_ENV
+          echo "CONFIG_BRANCH=${{ github.event.inputs['config-branch'] || 'master' }}" >> $GITHUB_ENV
 
       - name: Checkout config repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: ${{ env.CONFIG_REPO }}
           ref: ${{ env.CONFIG_BRANCH }}
@@ -45,12 +46,15 @@ jobs:
 
       - name: Build firmware
         run: |
+          echo "Building target: ${{ github.event.inputs.target }}"
           make ${{ github.event.inputs.target }} CONFIG_REPO=./config
+
+      - name: List build directory
+        run: ls -R obj/${{ github.event.inputs.target }} || echo "Build folder not found"
 
       - name: Upload firmware artifact
         if: success()
         uses: actions/upload-artifact@v3
         with:
           name: firmware-${{ github.event.inputs.target }}
-          path: |
-            obj/${{ github.event.inputs.target }}/*.hex
+          path: obj/${{ github.event.inputs.target }}/*.hex
