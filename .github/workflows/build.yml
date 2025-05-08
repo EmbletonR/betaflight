@@ -45,6 +45,9 @@ jobs:
           pip3 install --upgrade pip
           make arm_sdk_install
 
+      - name: Hydrate config directory
+        run: make configs CONFIG_REPO=./config
+
       - name: Build firmware
         run: |
           echo "Building target: ${{ github.event.inputs.target }}"
