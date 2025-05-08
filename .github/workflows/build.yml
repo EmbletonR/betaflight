@@ -48,7 +48,9 @@ jobs:
           make ${{ github.event.inputs.target }} CONFIG_REPO=./config
 
       - name: Upload firmware artifact
-        uses: actions/upload-artifact@v2
+        if: success()
+        uses: actions/upload-artifact@v3
         with:
           name: firmware-${{ github.event.inputs.target }}
-          path: obj/${{ github.event.inputs.target }}/*.hex
+          path: |
+            obj/${{ github.event.inputs.target }}/*.hex
