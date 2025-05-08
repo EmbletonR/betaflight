@@ -1,0 +1,54 @@
+name: Build Firmware
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Board target (e.g. EMAX_TINYHAWKF4SX1280)'
+        required: true
+      revision:
+        description: 'Firmware revision (commit SHA or tag, leave blank for latest)'
+        required: false
+      config-repo:
+        description: 'URL of the config repository'
+        required: false
+      config-branch:
+        description: 'Branch of the config repository'
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Betaflight source
+        uses: actions/checkout@v2
+
+      - name: Set revision
+        id: vars
+        run: |
+          echo "REVISION=${{ github.event.inputs.revision || 'master' }}" >> $GITHUB_ENV
+          echo "CONFIG_REPO=${{ github.event.inputs.config-repo || 'https://github.com/betaflight/config' }}" >> $GITHUB_ENV
+          echo "CONFIG_BRANCH=${{ github.event.inputs.config-branch || 'master' }}" >> $GITHUB_ENV
+
+      - name: Checkout config repository
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ env.CONFIG_REPO }}
+          ref: ${{ env.CONFIG_BRANCH }}
+          path: config
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y python3 python3-pip gcc-arm-none-eabi scons
+          pip3 install --upgrade pip
+
+      - name: Build firmware
+        run: |
+          make ${{ github.event.inputs.target }} CONFIG_REPO=./config
+
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: firmware-${{ github.event.inputs.target }}
+          path: obj/${{ github.event.inputs.target }}/*.hex
