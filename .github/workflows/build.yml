@@ -38,11 +38,12 @@ jobs:
           ref: ${{ env.CONFIG_BRANCH }}
           path: config
 
-      - name: Install dependencies
+      - name: Install dependencies and correct ARM toolchain
         run: |
           sudo apt update
-          sudo apt install -y python3 python3-pip gcc-arm-none-eabi scons
+          sudo apt install -y python3 python3-pip scons
           pip3 install --upgrade pip
+          make arm_sdk_install
 
       - name: Build firmware
         run: |
